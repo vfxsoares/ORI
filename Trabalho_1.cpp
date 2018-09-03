@@ -148,15 +148,8 @@ string dados_para_registro(string dados[4]) {
 }
 
 void inteiro_para_little_endian_de_2_bytes(int x, char *saida, int posicao_inicio) {
-    stringstream aux;
-    string k;
-
-    aux << setfill('0') << setw(4) << hex << x;
-
-    k = aux.str();
-
-    saida[posicao_inicio] = strtol(k.substr(2, 2).c_str(), NULL, 16);
-    saida[posicao_inicio + 1] = strtol(k.substr(0, 2).c_str(), NULL, 16);
+    saida[posicao_inicio] = x % 256;
+    saida[posicao_inicio + 1] = x / 256;
 }
 
 int little_endian_de_2_bytes_para_inteiro(char *entrada, int posicao_inicio) {
