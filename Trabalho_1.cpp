@@ -66,8 +66,8 @@ bool escrever(const string &nome_arquivo, int num_registros) {
             bytes_bloco = 0;
         }
 
-        for (int j = 0, k = 0; j < tamanho_registro; ++j, ++k)
-            buffer_bloco[bytes_bloco + j] = registro[k];
+        for (int j = 0; j < tamanho_registro; ++j)
+            buffer_bloco[bytes_bloco + j] = registro[j];
 
         bytes_bloco += tamanho_registro;
     }
