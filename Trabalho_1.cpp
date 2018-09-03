@@ -55,7 +55,7 @@ bool escrever(const string &nome_arquivo, int num_registros) {
         }
 
         registro.push_back(SEPARADOR_REGISTRO);
-		
+        
         tamanho_registro = registro.length();
 
         if (tamanho_registro + bytes_bloco > 510) {
@@ -95,38 +95,35 @@ bool buscar(const string &nome_arquivo) {
     }
 
     while (cin >> RA_alvo && RA_alvo != "0") {
+        stringstream buffer;
+        
         while (!encontrou && arquivo_blocos.read(bloco, 512)) {
             encontrou = false;
 
-            stringstream aux(remover_fragmentacao_externa(bloco));
-            string token;
+            stringstream stream_bloco(remover_fragmentacao_externa(bloco));
+            string registro;
 
-            while (!encontrou && getline(aux, token, SEPARADOR_REGISTRO)) {
-                stringstream aux2(token), buffer;
-                string token2;
+            while (!encontrou && getline(stream_bloco, registro, SEPARADOR_REGISTRO)) {
+                stringstream stream_registro(registro);
+                string campo;
                 int k = 0;
 
-                while (getline(aux2, token2, SEPARADOR_CAMPO)) {
-                    if (!encontrou) {
-                        if (token2 != RA_alvo)
-                            break;
-                        else
-                            encontrou = true;
-                    }
+                while (getline(stream_registro, campo, SEPARADOR_CAMPO) && (encontrou || (!encontrou && campo == RA_alvo))) {
+                    if (!encontrou)
+                        encontrou = true;
 
-                    buffer << token2;
+                    buffer << campo;
+                    
                     if (++k < 4)
                         buffer << ':';
                 }
-
-                cout << buffer.str();
             }
         }
 
         if (!encontrou)
-            cout << '*';
-
-        cout << endl;
+            cout << '*' << endl;
+        else 
+            cout << buffer.str() << endl;
 
         arquivo_blocos.clear();
         arquivo_blocos.seekg(0, fstream::beg);
