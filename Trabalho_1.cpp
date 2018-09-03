@@ -15,7 +15,6 @@ bool buscar(const string &nome_arquivo);
 bool escrever(const string &nome_arquivo, int num_registros);
 int little_endian_de_2_bytes_para_inteiro(char *entrada, int posicao_inicio);
 void inteiro_para_little_endian_de_2_bytes(int x, char *saida, int posicao_inicio);
-string dados_para_registro(string dados[4]);
 string remover_fragmentacao_externa(char *bloco);
 
 int main() {
@@ -46,13 +45,17 @@ bool escrever(const string &nome_arquivo, int num_registros) {
     }
 
     for (int i = 0; i < num_registros; ++i) {
-        string dados[4], registro;
+        string aux, registro;
         int tamanho_registro;
 
-        for (int j = 0; j < 4; ++j)
-            getline(cin, dados[j]);
+        for (int j = 0; j < 4; ++j) {
+            getline(cin, aux);
+            registro.append(aux);
+            registro.push_back(SEPARADOR_CAMPO);
+        }
 
-        registro = dados_para_registro(dados);
+        registro.push_back(SEPARADOR_REGISTRO);
+		
         tamanho_registro = registro.length();
 
         if (tamanho_registro + bytes_bloco > 510) {
@@ -134,17 +137,6 @@ bool buscar(const string &nome_arquivo) {
     arquivo_blocos.close();
 
     return true;
-}
-
-string dados_para_registro(string dados[4]) {
-    stringstream construtor_de_registro;
-
-    for (int i = 0; i < 4; ++i)
-        construtor_de_registro << dados[i] << SEPARADOR_CAMPO;
-
-    construtor_de_registro << SEPARADOR_REGISTRO;
-
-    return construtor_de_registro.str();
 }
 
 void inteiro_para_little_endian_de_2_bytes(int x, char *saida, int posicao_inicio) {
